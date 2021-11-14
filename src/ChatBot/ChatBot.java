@@ -28,5 +28,18 @@ public class ChatBot {
                 System.out.println("Done!");}
         }
 
+        System.out.println("Now I want to ask you one question. Сheck your general knowledge.How many chromosomes does a person have? ");
+        System.out.println("1.46\n2.23\n3.47\n4.45");
+        while (true) {
+            int user_answer = scanner.nextInt();
+            if (user_answer == 1) {
+                System.out.println("Wonderful!You are smart:)");
+                break;
+            } else {
+                System.out.println("Unfortunately no:(.Please, try again!");
+            }
+        }
+        System.out.println("Goodbye! Have a nice day");
+
     }
 }
