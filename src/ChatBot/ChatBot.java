@@ -40,6 +40,5 @@ public class ChatBot {
             }
         }
         System.out.println("Goodbye! Have a nice day");
-
     }
 }
