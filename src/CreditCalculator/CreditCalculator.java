@@ -1,63 +1,80 @@
 package CreditCalculator;
-import java.util.Scanner;
+
 
 public class CreditCalculator {
 
-    static double loan, loanPrincipal, monthNumber, paymentMonth, i;
-    public static final Scanner in = new Scanner(System.in);
+    static double lending, lendingPrincipal, monthNumber, paymentMonth, i, paymentDiff;
+    static int over = 0;
+
 
     public static void main(String[] args) {
+        String type = System.getProperty("type");
+        String interest = System.getProperty("interest");
+        String periods = System.getProperty("periods");
+        String principal = System.getProperty("principal");
+        String payment = System.getProperty("payment");
 
-        System.out.println("""
-                What do you want to calculate?
-                 type "n" - for number of monthly payments,
-                 type "a" - for annuity monthly payment amount,
-                 type "p" - for the loan principal:\"""");
-        String user = in.next();
-        if (user.equals("n")) {
-            System.out.println("Enter a loan principal:");
-            loanPrincipal = in.nextInt();
-            paymentMonth = in.nextInt();
-            loanInterest();
-            monthNumber = Math.log(paymentMonth / (paymentMonth - (i * loanPrincipal))) / Math.log(1 + i);
-            period();
-        }
-        if (user.equals("a")) {
-            System.out.println("Enter a loan principal:");
-            loanPrincipal = in.nextDouble();
-            System.out.println("Enter the number of periods:");
-            monthNumber = in.nextInt();
-            loanInterest();
-            paymentMonth = loanPrincipal * ((i * Math.pow((1 + i), monthNumber)) / (Math.pow((1 + i), monthNumber) - 1));
-            System.out.printf("Your monthly payment = %.0f", paymentMonth);
+        if (type != null) {
+            if (type.equals("annuity")) {
+                if (principal != null && payment != null && interest != null) {
+                    paymentMonth = Double.parseDouble(payment);
+                    lendingPrincipal = Double.parseDouble(principal);
+                    lending = Double.parseDouble(interest);
+                    i = (lending / (12 * 100));
+                    monthNumber = Math.log(paymentMonth / (paymentMonth - (i * lendingPrincipal))) / Math.log(1 + i);
+                    int period = (int) Math.ceil(monthNumber), year = (period / 12), month = (period % 12);
 
-        }
-        if (user.equals("p")) {
-            System.out.println("Enter the annuity payment:");
-            paymentMonth = in.nextDouble();
-            System.out.println("Enter the number of periods:");
-            monthNumber= in.nextInt();
-            loanInterest();
-            loanPrincipal=paymentMonth/((i*Math.pow((1+i),monthNumber))/(Math.pow((1+i),monthNumber)-1));
-            System.out.printf("Your loan principal = %.0f", loanPrincipal);
-        }
-    }
-    public static void loanInterest(){
-        System.out.println("Enter a loan interest:");
-        loan = in.nextDouble();
-        i =  (loan/(12*100));
-    }
-    public static void period(){
-        int period = (int) Math.ceil(monthNumber);
-        int year = (period / 12);
-        int month = (period % 12);
+                    if (year > 0 & month > 0) {
+                        System.out.println("It will take " + year + " years and " + month + " month to repay this loan");
+                    } else if (year == 0) {
+                        System.out.println("It will take " + month + " month to repay this loan");
+                    } else {
+                        System.out.println("It will take " + year + " years to repay this loan");
+                    }
+                } else if (periods != null && payment != null && interest != null) {
+                    monthNumber = Double.parseDouble(periods);
+                    paymentMonth = Double.parseDouble(payment);
+                    lending = Double.parseDouble(interest);
+                    i = (lending / (12 * 100));
 
-        if (year>0 & month >0){
-            System.out.println("It will take " + year + " years and " + month + " month to repay this loan");
-        } else if(year == 0){
-            System.out.println("It will take " + month + " month to repay this loan");
-        } else {
-            System.out.println("It will take " + year + " years to repay this loan");
+                    lendingPrincipal = paymentMonth / ((i * Math.pow((1 + i), monthNumber)) / (Math.pow((1 + i), monthNumber) - 1));
+                    System.out.printf("Your loan principal = %.0f", lendingPrincipal);
+
+                } else if (principal != null && periods != null && interest != null) {
+                    lendingPrincipal = Double.parseDouble(principal);
+                    monthNumber = Double.parseDouble(periods);
+                    lending = Double.parseDouble(interest);
+                    i = (lending / (12 * 100));
+
+                    paymentMonth = lendingPrincipal * ((i * Math.pow((1 + i), monthNumber)) / (Math.pow((1 + i), monthNumber) - 1));
+                    System.out.printf("Your monthly payment = %.0f", paymentMonth);
+                } else {
+                    System.out.println("Incorrect parameters.");
+                    System.exit(0);
+                }
+        }else if (type.equals("diff")) {
+                if (principal == null || periods == null || interest == null) {
+                    System.out.println("Incorrect parameters!!!");
+                    System.exit(0);
+                }
+                monthNumber = Double.parseDouble(periods);
+                lendingPrincipal = Double.parseDouble(principal);
+                lending = Double.parseDouble(interest);
+                i = (lending / (12 * 100));
+                for (int m = 1; m <= monthNumber; m++) {
+                    paymentDiff = lendingPrincipal / monthNumber + i * (lendingPrincipal - ((lendingPrincipal * (m - 1)) / (monthNumber)));
+                    paymentDiff = Math.ceil(paymentDiff);
+                    over = (int) (over + (paymentDiff - (lendingPrincipal / monthNumber)));
+                    System.out.println("Month " + m + ": payment is " + paymentDiff);
+                }
+                System.out.println("Overpayment = " + over);
+            } else {
+                System.out.println("Incorrect parameters!!!");
+                System.exit(0);
+            }
+        }else {
+            System.out.println("Incorrect parameters!!!");
+            System.exit(0);
         }
     }
 }
